@@ -1,0 +1,44 @@
+@base: #f5f5f5;
+@border: #ddd;
+@badgeClr: #777;
+
+
+#mapPanel .panel-body {
+    padding: 0px;
+}
+
+#worksitesListPanel .list-group{
+    margin-bottom: 0px;
+}
+
+#worksitesListPanel .panel-body {
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+#selectedDataPanel .ng-binding {
+    width: 300px;
+}
+
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus,
+.list-group-item:hover{
+  background-color: saturate(@base, 5%);
+  border-color: @border;
+  color: black;
+}
+
+a.list-group-item:focus,
+a.list-group-item:hover,
+button.list-group-item:focus,
+button.list-group-item:hover {
+    background-color: white;
+    border-color: @border;
+    color: black;
+}
+
+.list-group-item.active>.badge {
+    color: white;
+    background-color: @badgeClr;
+}
