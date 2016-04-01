@@ -38,7 +38,7 @@
                     <!-- List of worksites -->
                     <div ng-cloak class="col-sm-4 ng-cloak" id="worksitesListPanel" >
                         <div class="panel panel-default">
-                            <div class="panel-heading">Harvest worksites <span class="pull-right" >Total stems: {{totalStems}}</span></div>
+                            <div class="panel-heading">Harvest worksites <span class="pull-right" >Total trees: {{totalStems}}</span></div>
                             <div class="panel-body">
                                 <div class="list-group worksites">
                                     <a href="#" class="list-group-item" ng-repeat="worksite in worksites" ng-click="select(worksite)" ng-class="{active : selected.indexOf(worksite.id) !== -1 }"><span class="badge">{{worksite.stems}}</span> {{worksite.id}}</a>
@@ -56,7 +56,7 @@
                                     <div class="panel-heading">Selected data</div>
                                     <div class="panel-body">
                                         <p>Worksites: {{ selectedData['worksites'] }} </p>
-                                        <p>Stems: {{ selectedData['stems'] }}</p>
+                                        <p>Trees: {{ selectedData['stems'] }}</p>
                                         <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#dataExtractionModal">Create...</button>
                                     </div>
                                 </div>
@@ -113,16 +113,11 @@
                                                 <option>Log</option>
                                             </select>
                                         </div>
-                                        <div class="abunate-switch-container" ng-switch on="field.group">
-                                            <!-- DEFAULT -->
-                                            <div class="animate-switch" ng-switch-default></div>
-                                            <!-- CASE: TREE LEVEL -->
-                                            <div class="animate-switch" ng-switch-when="treeLevel">Tree level</div>
-                                            <!-- CASE: LOCATION LEVEL -->
-                                            <div class="animate-switch" ng-switch-when="locationLevel">Location level</div>
-                                        </div>
-                                        <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">Coordinates</label>
-                                        <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">DBH</label>
+                                    <!-- CASE: TREE LEVEL -->
+                                    <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">Coordinates</label>
+                                    <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">DBH</label>
+
+                                    <!-- CASE: LOCATION LEVEL -->
                                         <!-- Reference diameter height??? -->
                                         <label class="checkbox-inline"><input type="checkbox" value="">Stem Length</label>
                                         <label class="checkbox-inline"><input type="checkbox" value="">Tree Length</label>
