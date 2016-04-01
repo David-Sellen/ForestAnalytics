@@ -1,5 +1,4 @@
-var app = angular.module('firespark', []);
-
+// Leaflet interactive map
 var map = L.map('mapid').setView([63.3435503, 15.3123929], 4);
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -10,52 +9,73 @@ map.zoomControl.setPosition('topright');
 
 setTimeout(function(){map.invalidateSize();}, 100);
 
-function selectWorksite(item){
-    var index = $scope.selected.indexOf(item.id);
-    if(index !== -1) {
-        $scope.selected.splice(index, 1);
-        $scope.selectedData['stems'] -= item.stems;
-        $scope.selectedData['worksites'] -= 1;
-    } else {
-        $scope.selected.push(item.id);
-        $scope.selectedData['stems'] += item.stems;
-        $scope.selectedData['worksites'] += 1;
-    }
-}
+// Angular appliaction
+var app = angular.module('firespark', []);
 
 app.controller('AppController', function($scope, $http) {
     $scope.totalStems = 0;
     $scope.worksites = [];
+    $scope.selectedData = {'stems' : 0, 'worksites' : 0 };
+    $scope.selected = [];
+
+    function selectWorksite(item){
+        var index = $scope.selected.indexOf(item.id);
+        if(index !== -1) {
+            item.active = false;
+            $scope.selected.splice(index, 1);
+            $scope.selectedData['stems'] -= item.stems;
+            $scope.selectedData['worksites'] -= 1;
+            item.marker.setStyle({
+                fillColor: 'GREEN'
+            });
+        } else {
+            item.active = true;
+            $scope.selected.push(item.id);
+            $scope.selectedData['stems'] += item.stems;
+            $scope.selectedData['worksites'] += 1;
+            item.marker.setStyle({
+                fillColor: 'RED'
+            });
+        }
+    }
+
     $http.get('/worksites/listAll').success(function(data) {
         $scope.worksites = data.map(JSON.parse);
 
 
         angular.forEach($scope.worksites, function(item){
-                $scope.totalStems = $scope.totalStems + item.stems;
-                var circle = L.circleMarker([item.latitude, item.longitude], {
-                    color: 'RED',
-                    fill: true,
-                    fillColor: 'RED',
-                    fillOpacity: 0.6,
-                    weight: 2,
-                    clickable: true
-                });
-                circle.setRadius(8);
-                circle.bindPopup("Worksite: " + item.id + " </br> Trees: " + item.stems);
-                circle.on('mouseover', function(e){
-                    marker.openPopup();
-                });
-                circle.on('click', function onClick(e) {
-                    alert("click");
-                    //selectWorksite(item);
-                });
-                circle.addTo(map);
+            item.active = false;
+            $scope.totalStems = $scope.totalStems + item.stems;
+            item.marker = L.circleMarker([item.latitude, item.longitude], {
+                fill: true,
+                fillColor: 'GREEN',
+                fillOpacity: 0.6,
+                weight: 0,
+                clickable: true
+            });
+            item.marker.setRadius(8);
+
+            item.marker.on('mouseover', function(e){
+                //Create a popup and open it.
+                e.target.bindPopup("Worksite: " + item.id + " </br> Trees: " + item.stems,
+                {closeButton: false, offset: L.point(0, -10)}).openPopup();
+            });
+
+            item.marker.on("mouseout", function (e) {
+                // Destroying the popup
+                 e.target.closePopup();
+            });
+            item.marker.on('click', function onClick(e) {
+                selectWorksite(item);
+                $scope.$apply()
+            });
+            item.marker.addTo(map);
         });
     });
 
     $scope.selectedData = {'stems' : 0, 'worksites' : 0 };
     $scope.selected = [];
-    $scope.select = selectWorksite(item);
+    $scope.select = function(item){selectWorksite(item)};
 })
 
 // Form for creating a dataset

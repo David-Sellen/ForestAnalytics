@@ -41,7 +41,7 @@
                             <div class="panel-heading">Harvest worksites <span class="pull-right" >Total trees: {{totalStems}}</span></div>
                             <div class="panel-body">
                                 <div class="list-group worksites">
-                                    <a href="#" class="list-group-item" ng-repeat="worksite in worksites" ng-click="select(worksite)" ng-class="{active : selected.indexOf(worksite.id) !== -1 }"><span class="badge">{{worksite.stems}}</span> {{worksite.id}}</a>
+                                    <a href="#" class="list-group-item" ng-repeat="worksite in worksites" ng-click="select(worksite)" ng-class="{active : worksite.active}"><span class="badge">{{worksite.stems}}</span> {{worksite.id}}</a>
                                 </div>
                             </div>
                         </div>
