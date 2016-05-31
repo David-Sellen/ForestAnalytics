@@ -168,7 +168,6 @@ public class HarvestProductionReportRepository {
 
     public DataFrame queryHPRData(ETLQuery ETLQuery){
         List<String> worksiteIDs = ETLQuery.getWorksites(); // Object array of worksite IDs
-
         // Filter data to only contain targeted worksites
         DataFrame results = df.select(col("ObjectDefinition.ObjectUserID.#VALUE").as("ObjectUserID"), explode(col("Stem")).as("Stem"), col("SpeciesGroupDefinition"))
                 .distinct()
