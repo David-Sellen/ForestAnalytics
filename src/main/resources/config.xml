@@ -9,7 +9,7 @@
 
     <!--<context:property-placeholder location="classpath:application.properties" />-->
 
-    <bean id="spBean" class="edu.miun.firespark.domain.SparkContextBean" />
+    <bean id="spBean" class="edu.miun.firespark.utilities.SparkContextBean" />
 
 
 

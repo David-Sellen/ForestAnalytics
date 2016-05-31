@@ -4,9 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AngularJS</title>
+    <!--
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/firespark.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css" />
     <link rel="stylesheet/less" type="text/css" href="css/main.less" />
     <style type="text/css">
         [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -20,15 +25,14 @@
 <div class="container" ng-controller="AppController">
     <div class="row">
         <div class="col-sm-4">
-            <h1>Analytics</h1>
+            <h1>Forest Analytics</h1>
         </div>
     </div>
     <div class="row">
         <div ng-cloak class="col-sm-12 ng-cloak">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#a" data-toggle="tab">Create</a></li>
-            <li><a href="#b" data-toggle="tab">Manage</a></li>
-            <li><a href="#c" data-toggle="tab">Analyze</a></li>
+            <li><a href="#b" data-toggle="tab">Analyze</a></li>
         </ul>
         <div class="tab-content">
             <!-- CREATE -->
@@ -38,7 +42,8 @@
                     <!-- List of worksites -->
                     <div ng-cloak class="col-sm-4 ng-cloak" id="worksitesListPanel" >
                         <div class="panel panel-default">
-                            <div class="panel-heading">Harvest worksites <span class="pull-right" >Total trees: {{totalStems}}</span></div>
+                            <div class="panel-heading">Harvest worksites: {{worksites.length}} <span class="pull-right" >Trees: {{totalStems}}</span></div>
+                            <button type="button" class="btn btn-default col-sm-12" ng-click="selectAll()" >Select/deselect all</button>
                             <div class="panel-body">
                                 <div class="list-group worksites">
                                     <a href="#" class="list-group-item" ng-repeat="worksite in worksites" ng-click="select(worksite)" ng-class="{active : worksite.active}"><span class="badge">{{worksite.stems}}</span> {{worksite.id}}</a>
@@ -55,8 +60,8 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading">Selected data</div>
                                     <div class="panel-body">
-                                        <p>Worksites: {{ selectedData['worksites'] }} </p>
-                                        <p>Trees: {{ selectedData['stems'] }}</p>
+                                        <p class="pull-left" >Worksites: {{ selectedData['worksites'] }} </p>
+                                        <p class="pull-left" >Trees: {{ selectedData['stems'] }}</p>
                                         <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#dataExtractionModal">Create...</button>
                                     </div>
                                 </div>
@@ -89,51 +94,67 @@
                             <!-- Form for data extraction -->
                             <form name="dataExtractionForm" role="form" ng-controller="formController" >
                                 <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="usr">Name:</label>
-                                            <input type="text" class="form-control" id="usr">
+                                    <div class="row">
+                                        <div ng-cloak class="col-sm-12 ng-cloak" >
+                                            <div class="form-group">
+                                                <label for="name">Name:</label>
+                                                <input type="text" class="form-control" id="name" ng-model="field.name">
+                                            </div>
+                                            <p>Date interval - Bootstrap 3 Datepicker?</p>
+                                            <!-- This choice determines if stem or location level -->
+                                            <div class="form-group">
+                                                <label for="sel1">Target group:</label>
+                                                <select class="form-control" id="sel1" ng-model="field.group">
+                                                    <option value="worksite" selected>Harvest worksite</option>   <!-- Makes location level data available -->
+                                                    <!--<option value="tree">Tree</option>--> <!-- Makes tree level data available -->
+                                                    <option value="stem">Stem</option>       <!-- Makes tree level data available -->
+                                                    <!--<option value="log">Log</option>-->        <!-- Makes tree level data available -->
+                                                </select>
+                                            </div>
+                                            <!-- If data at tree level -->
+                                            <div class="form-group">
+                                                <label for="sel2">Tree category:</label>
+                                                <select class="form-control" id="sel2" ng-model="field.type" >
+                                                    <option ng-if="field.group == 'worksite'" value="tree" selected>Whole tree</option>
+                                                    <option value="tree">Stem</option>
+                                                    <option value="log">Log</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <p>Date interval - Bootstrap 3 Datepicker?</p>
-                                        <!-- This choice determines if stem or location level -->
-                                        <div class="form-group">
-                                            <label for="sel1">Target group:</label>
-                                            <select class="form-control" id="sel1" ng-model="field.group">
-                                                <option value="worksite">Harvest worksite ID</option>   <!-- Makes location level data available -->
-                                                <option value="tree">Whole tree</option> <!-- Makes tree level data available -->
-                                                <option value="stem">Stem</option>       <!-- Makes tree level data available -->
-                                                <option value="log">Log</option>        <!-- Makes tree level data available -->
-                                            </select>
+                                    </div>
+                                    <!-- CASE: WORKSITE LEVEL -->
+                                    <div class="row" ng-if="field.group == 'worksite'">
+                                        <div ng-cloak class="col-sm-6 ng-cloak" >
+                                            <label class="checkbox" ><input type="checkbox" value="max length">max length</label>
+                                            <label class="checkbox" ><input type="checkbox" value="min lenght">Max length</label>
+                                            <label class="checkbox" ><input type="checkbox" value="avr length">Average length</label>
                                         </div>
-                                        <!-- If data at tree level -->
-                                        <div class="form-group">
-                                            <label for="sel2">Tree category:</label>
-                                            <select class="form-control" id="sel2" ng-model="field.type" >
-                                                <option ng-if="field.group == 'worksite'">Whole tree</option>
-                                                <option>Stem</option>
-                                                <option>Log</option>
-                                            </select>
+                                        <div ng-cloak class="col-sm-6 ng-cloak" >
+                                            <label class="checkbox" ><input type="checkbox" value="count">Count trees</label>
+                                            <label class="checkbox"><input type="checkbox" value="species">Percentage of wood species</label>
                                         </div>
+                                    </div>
+
                                     <!-- CASE: TREE LEVEL -->
-                                    <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">Coordinates</label>
-                                    <label class="checkbox-inline" ng-show="treeLevel"><input type="checkbox" value="">DBH</label>
-
-                                    <!-- CASE: LOCATION LEVEL -->
-                                        <!-- Reference diameter height??? -->
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Stem Length</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Tree Length</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Log Length</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Diameter top end UB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Diameter top end OB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Diameter butt end UB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Diameter butt end OB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Log volume UB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Log volume OB</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Wood species</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Count logs</label>
-                                        <label class="checkbox-inline"><input type="checkbox" value="">Count trees</label>
-
+                                    <div class="row" ng-if="field.group == 'stem'">
+                                        <div ng-cloak class="col-sm-6 ng-cloak" >
+                                            <label class="checkbox"><input type="checkbox"  ng-click="addFeature('length')">Length</label>
+                                            <label class="checkbox"><input type="checkbox"  ng-click="addFeature('coordinates')">Coordinates</label>
+                                            <label class="checkbox"><input type="checkbox"  ng-click="addFeature('dbh')">DBH</label>
+                                            <!-- Reference diameter height??? -->
+                                            <label class="checkbox"><input type="checkbox" value="dia">Diameter top end UB</label>
+                                            <label class="checkbox"><input type="checkbox" value="">Diameter top end OB</label>
+                                        </div>
+                                        <div ng-cloak class="col-sm-6 ng-cloak" >
+                                            <label class="checkbox"><input type="checkbox" value="">Diameter butt end UB</label>
+                                            <label class="checkbox"><input type="checkbox" value="">Diameter butt end OB</label>
+                                            <label class="checkbox"><input type="checkbox" value="">Log volume UB</label>
+                                            <label class="checkbox"><input type="checkbox" value="">Log volume OB</label>
+                                            <label class="checkbox"><input type="checkbox" value="">Wood species</label>
+                                        </div>
+                                    </div>
+                                    {{ field.features }}
                                 </div>
-
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-default" ng-click="submitQuery()" value="Submit" data-dismiss="modal" >Create dataset</button>
@@ -144,28 +165,123 @@
                     </div>
                 </div>
             </div>
-            <!-- MANAGE -->
-            <div class="tab-pane" id="b">
+            <!-- ANALYZE -->
+            <div class="tab-pane" id="b" ng-controller="datasetCtrl">
                 <div class="row">
-                    <div ng-cloak class="col-sm-4 ng-cloak">
-                        <ul class="list-group dataset">
+                    <div ng-cloak class="col-sm-4 ng-cloak" >
+                        <div class="row">
+                            <!-- List of stored datasets -->
+                        <ul class="list-group dataset" >
                             <li class="list-group-item active"> Datasets</li>
-                            <li class="list-group-item"><span class="badge">12</span> Test</li>
+                            <a href="#" class="list-group-item" ng-repeat="dataset in datasets" ng-click="select(dataset)" ng-class="{active : dataset == selectedDataset}">
+                                <span class="badge">null</span> {{dataset}}
+                            </a>
                         </ul>
+                        </div>
+                        <div class="row" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-default pull-right" ng-click="loadDataset(selectedDataset)" >Load dataset</button>
+                        </div>
+                        <div class="row">
+                            <ul class="list-group models">
+                                <li class="list-group-item active"> Models</li>
+                                <li class="list-group-item"><span class="badge">K-means</span> Load HFS://models/*</li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                        <button type="button" class="btn btn-default pull-right" >Load model</button>
+                        </div>
                     </div>
+                    <!-- Algorithm options -->
                     <div ng-cloak class="col-sm-4 ng-cloak">
-                        <ul class="list-group models">
-                            <li class="list-group-item active"> Models</li>
-                            <li class="list-group-item"><span class="badge">C4.5</span> Test</li>
-                        </ul>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Machine learning</div>
+                            <div class="panel-body">
+                                <div class="form-group algorithms" >
+                                    <label for="alg">Algorithm:</label>
+                                    <select class="form-control" id="alg" ng-model="field.algorithm" ng-init="field.algorithm='kmeans'">
+                                        <option value="kmeans" selected>K-Means</option>
+                                        <option value="c45"> C4.5</option>
+                                    </select>
+                                </div>
+                                <!-- Parameters for all algorithms -->
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="useTrain" ng-model="field.useTrain" >Use training set</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="splitRatio">Percent split:</label>
+                                    <input type="text" class="form-control" id="splitRatio" ng-disabled="field.useTrain" ng-model="field.splitRatio" ng-init="field.splitRatio=77" min="0" max="99" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="seed">Seed for randomized distribution train/test data:</label>
+                                    <input type="text" class="form-control" id="seed" ng-model="field.seed" ng-init="field.seed=12345" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="label">Label:</label>
+                                    <input type="text" class="form-control" id="label" ng-model="field.label" ng-init="field.label='SpeciesGroupName'" required>
+                                </div>
+                                <!-- K-Means method -->
+                                <div ng-if="field.algorithm == 'kmeans'">
+                                    <div class="form-group">
+                                        <label for="k">K:</label>
+                                        <input type="text" class="form-control" id="k" ng-model="field.k" ng-init="field.k=3" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="iterations">Iterations:</label>
+                                        <input type="text" class="form-control" id="iterations" ng-model="field.iterations" ng-init="field.iterations=20" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cntSeed">Seed for initial centroids:</label>
+                                        <input type="text" class="form-control" id="cntSeed" ng-model="field.centroidSeed" ng-init="field.centroidSeed=12345" >
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-default pull-right" ng-disabled="!loadedDataset" ng-click="submitQuery(field)" >Run</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- selected dataset and results -->
+                    <div ng-cloak class="col-sm-4 ng-cloak">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Loaded dataset</div>
+                            <div class="panel-body">
+                                <p>Dataset: {{ loadedDataset.name }}</p>
+                                <p>Instances: {{ loadedDataset.instances }}</p>
+                                <p>Attributes: {{ loadedDataset.attributes.join(", ") }}</p>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Results</div>
+                            <div class="panel-body">
+                                <span>
+                                    Clusters:{{mlResults.k}}</br>
+                                    Instances:{{mlResults.instances}}</br>
+                                    Labels:{{mlResults.labels.join(", ")}}</br>
+                                </span></br>
+                                <span ng-repeat="cluster in mlResults.clusters">
+                                    <b>Cluster {{cluster.id}}</b></br>
+                                    <!-- Centroid: {{cluster.centroid.join(", ")}}</br> -->
+                                    Instances: {{cluster.instances}} </br>
+                                    <div id="chart{{cluster.id}}" ></div>
+                                    {{printChart(cluster)}}
+                                    <!--<span ng-repeat="(key, value) in cluster.instancesWithLabel"><span>{{key}} {{value}}</span></br></span>-->
+                                    </br>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-
             </div>
             <!-- ANALYZE -->
-            <div class="tab-pane" id="c">Thirdamuno, ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate.
-                Quisque mauris augue, molestie tincidunt condimentum vitae. </div>
+            <div class="tab-pane" id="c">
+                <div class="row">
+                    <div ng-cloak class="col-sm-4 ng-cloak">
+                        Select dataset.<br/> Select algorithm.<br/> Select class attribute, cross validation etc.
+                    </div>
+                    <div ng-cloak class="col-sm-4 ng-cloak">
+                    </div>
+                </div>
+            </div>
         </div>
         </div>
     </div>
@@ -185,12 +301,27 @@
   };
 </script>
 
+<!--
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://code.angularjs.org/1.5.0-rc.2/angular.min.js"></script>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>
-<script src="js/hello.js"></script>
+-->
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/angular.min.js"></script>
+<script src="js/leaflet.js"></script>
+<script src="js/less.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/ngstorage/0.3.6/ngStorage.min.js"></script>
+<script type="text/javascript" src="//code.angularjs.org/1.5.0-rc.2/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+<script src="js/app.js"></script>
+
+
 
 </body>
 </html>

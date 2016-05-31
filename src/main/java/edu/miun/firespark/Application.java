@@ -25,10 +25,6 @@ import java.util.Arrays;
 public class Application extends WebMvcConfigurerAdapter {
     final static Logger logger = Logger.getLogger("firespark");
 
-    // Local settings
-    static final String sparkLocal = "local[*]"; // Run locally on as many threads as possible
-    static final String localDir = "file:///D:/Skola/2016 VT Examensarbete Masternivå/SDC data/HPR filer/Raw";
-
     public void run(){
         // Init Spring Boot app
         SpringApplication.run(this.getClass());
