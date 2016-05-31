@@ -52,11 +52,9 @@
             </plugin>
         </plugins>
     </build>
-
     <properties>
         <tomcat.version>7.0.52</tomcat.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.spark</groupId>
