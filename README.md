@@ -20,7 +20,7 @@ The system consists of a back-end and front-end. The back-end communicates with 
 ## Try the system
 To compile and run the system, first change the values in the application.properties file.
 - `mode`: Set to local to run on a local machine or to distributed to connect to a computer cluster.
-- `storage.prefix`: The prefix for the type of storage, i.e. for Hadoop, use "hdfs://[IP to Hadoop cluster]:8020" or for local storage use "file///".
+- `storage.prefix`: The prefix for the type of storage, i.e. for Hadoop, use "hdfs://[IP to Hadoop cluster]:8020" or for local storage use "file:///".
 - `spark.master`: Set this to "Spark://[ip to Spark master node]:7077.
 - `location.dataset`: The path to the datasets location.
 - `location.hpr`: The path to the HPR files location.
