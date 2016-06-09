@@ -25,4 +25,4 @@ To compile and run the system, first change the values in the [application.prope
 - `location.dataset`: The path to the datasets location.
 - `location.hpr`: The path to the HPR files location.
 
-When starting the system it will first run Spring Boot and its embedded Tomcat server then it will start Spark and load filtered HPR data into the Spark worker nodes RAM.
+When starting the system it will first run Spring Boot and its embedded Tomcat server then it will start Spark and load filtered HPR data into the Spark worker nodes RAM. When the system has started the fron-end will be running on http://localhost:8080/.
