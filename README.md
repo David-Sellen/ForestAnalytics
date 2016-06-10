@@ -1,5 +1,5 @@
 # ForestAnalytics
-ForestAnalytics is a system developed for analysing data from the forest industry i.e. files from the [StanForD 2010](http://www.skogforsk.se/english/projects/stanford/) standard. Built on cloud technologies such as Apache Spark and Hadoop, the system enables processing of large amounts of forest data. Currently the system supports the harvest production reports (.hpr files) form the StanForD standard. 
+ForestAnalytics is a system developed for analysing data from the forest industry i.e. files from the [StanForD 2010](http://www.skogforsk.se/english/projects/stanford/) standard. Built on cloud technologies such as Apache Spark and Hadoop, the system enables processing of large amounts of forest data. Currently the system supports the harvest production reports (.hpr files) from the StanForD standard. 
 
 ## Architecture
 The system consists of a back-end and front-end. The back-end communicates with a computer cluster running Spark and Hadoop. The front-end is designed as a Single Page Application (SPA). Communication between front- and back-end is trough the back-ends REST API.
@@ -9,13 +9,13 @@ The system consists of a back-end and front-end. The back-end communicates with 
 - Hadoop Common 2.2
 
 ## Features
-- Local or distributed mode
-- Load and filter HPR data
-- Display harvest worksites with name and the number of harvested stems
-- Extract stem data to create datasets
-- Store and load datasets as Parquet files
-- Apply machine learning methods (currently only supports K-Means||)
-- Visualize machine learning results
+- Local or distributed mode.
+- Load and filter HPR data.
+- Display harvest worksites with name and the number of harvested stems.
+- Extract stem data to create datasets.
+- Store and load datasets as Parquet files.
+- Apply machine learning methods (currently only supports K-Means||).
+- Visualize machine learning results.
 
 ## Try the system
 To compile and run the system, first change the values in the [application.properties](src/main/resources/application.properties) file.
@@ -25,4 +25,4 @@ To compile and run the system, first change the values in the [application.prope
 - `location.dataset`: The path to the datasets location.
 - `location.hpr`: The path to the HPR files location.
 
-When starting the system it will first run Spring Boot and its embedded Tomcat server then it will start Spark and load filtered HPR data into the Spark worker nodes RAM. When the system has started the fron-end will be running on http://localhost:8080/.
+When booting the system it will first run Spring Boot and its embedded Tomcat server then it will start Spark and load filtered HPR data into the Spark worker nodes RAM. When the system has started the fron-end will be running on http://localhost:8080/.
